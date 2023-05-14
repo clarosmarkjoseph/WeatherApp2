@@ -28,9 +28,6 @@ class WeatherHistoryViewModel @Inject constructor(
             } else {
                 _historyState.value = WeatherHistoryState.OnEmpty
             }
-//            data.collectLatest {
-//
-//            }
         }
     }
 

@@ -19,8 +19,7 @@ import javax.inject.Inject
 
 class ManageWeatherUsecaseImpl @Inject constructor(
     private val getWeatherInfo: GetWeatherInfo,
-    private val utilityHelper: UtilityHelper,
-//    private val manageWeatherHistory: ManageWeatherHistory
+    private val utilityHelper: UtilityHelper
 ) : ManageWeatherUsecase {
 
     override suspend fun getWeatherReport(
@@ -39,8 +38,15 @@ class ManageWeatherUsecaseImpl @Inject constructor(
             }
         } catch (e: HttpException) {
             e.printStackTrace()
-            emit(NetworkResponse.Error(e.localizedMessage ?: Constants.NO_CONNECTION_MESSAGE))
+            if (e.code() == 401) {
+                emit(NetworkResponse.Error(Constants.INCORRECT_API_KEY_MESSAGE))
+            } else {
+                emit(NetworkResponse.Error(e.localizedMessage ?: Constants.NO_CONNECTION_MESSAGE))
+            }
         } catch (e: IOException) {
+            e.printStackTrace()
+            emit(NetworkResponse.Error(e.message ?: Constants.NO_CONNECTION_MESSAGE))
+        } catch (e: Exception) {
             e.printStackTrace()
             emit(NetworkResponse.Error(Constants.NO_CONNECTION_MESSAGE))
         }
@@ -79,15 +85,20 @@ class ManageWeatherUsecaseImpl @Inject constructor(
         )
     }
 
-    private fun mapToDescription(weather: List<Weather>?): Description {
-        val firstItem = weather?.first()
-        return Description(
-            mainDesc = firstItem?.description ?: "",
-            mainTitle = firstItem?.main?.uppercase() ?: "",
-            weatherIcon = firstItem?.let {
-                "${Constants.BASE_ICON_URL}/${it.icon}@2x.png"
-            } ?: ""
-        )
+    private fun mapToDescription(weather: List<Weather>?): Description? {
+        weather?.let {
+            if (it.isNotEmpty()) {
+                val firstItem = weather?.first()
+              return  Description(
+                    mainDesc = firstItem?.description ?: "",
+                    mainTitle = firstItem?.main?.uppercase() ?: "",
+                    weatherIcon = firstItem?.let {
+                        "${Constants.BASE_ICON_URL}/${it.icon}@2x.png"
+                    } ?: ""
+                )
+            }
+        }
+        return null
     }
 
     private fun mapToRain(rain: com.example.weatherapp.data.dto.Rain?): Rain {

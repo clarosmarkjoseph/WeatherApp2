@@ -88,6 +88,7 @@ fun ShowErrorMessage(text: String?, actionMessage: String? = null, action: (() -
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            println("error: ${text}")
             Text(
                 modifier = Modifier
                     .padding(20.dp)

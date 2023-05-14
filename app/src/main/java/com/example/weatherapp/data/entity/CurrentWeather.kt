@@ -3,7 +3,7 @@ package com.example.weatherapp.data.entity
 
 data class CurrentWeather(
     val temperature: Temperature?,
-    val description: Description,
+    val description: Description?,
     val visibility: String?,
     val windSpeed: String?,
     val cloudPercent: String,
