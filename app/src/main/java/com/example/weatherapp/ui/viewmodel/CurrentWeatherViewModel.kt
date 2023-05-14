@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.weatherapp.BuildConfig
 import com.example.weatherapp.common.constants.Constants
 import com.example.weatherapp.common.utils.ExtentionFunction.capitalizeWords
 import com.example.weatherapp.common.utils.NetworkResponse
@@ -35,6 +36,7 @@ class CurrentWeatherViewModel @Inject constructor(
 
     init {
         getCurrentLocation()
+        BuildConfig.APPLICATION_ID
     }
 
     private fun getCurrentLocation() {

@@ -1,6 +1,6 @@
 package com.example.weatherapp.data.repository
 
-import com.example.weatherapp.common.constants.WeatherMapApiConstants
+import com.example.weatherapp.BuildConfig
 import com.example.weatherapp.data.dto.CurrentWeatherResponse
 import com.example.weatherapp.data.remote.WeatherApi
 import com.example.weatherapp.domain.repository.GetWeatherInfo
@@ -14,7 +14,7 @@ class GetWeatherInfoImpl @Inject constructor(
         lat: Double,
         lng: Double
     ): CurrentWeatherResponse? {
-        val apiKey = WeatherMapApiConstants.API_ID
+        val apiKey = BuildConfig.OPEN_WEATHER_API_KEY
         return weatherApi.getCurrentWeather(lat = lat, lng = lng, appid = apiKey)
     }
 

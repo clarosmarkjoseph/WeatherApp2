@@ -6,7 +6,15 @@ An android Weather Application that uses android MVVM clean architecture using K
 
 ### How to enable the API https://api.openweathermap.org/ to your application
 
-Please check the kotlin object **WeatherMapApiConstants.kt** and insert your **API** key under variable **API_ID**
+- Since we cannot expose the api token to our github repo, I implemented a apikey.properties file which will hold the api key and this copy is only available to your local machine.
+- Create a file from the root project named **apikey.properties**
+- After creating **apikey.properties**, please put variable and value of your openweathermap api and name the variable this **OPEN_WEATHER_API_KEY = ""**"
+- Clean project and build. If you encounter compilation error, it means that you didn't created the property file or variable name is incorrect.
+- How did I load the property file can be seen in **app/build.gradle**
+- You can access the api key by accessing BuildConfig.OPEN_WEATHER_API_KEY
+#### Check screenshot
+
+![](ScreenshotAPIKey.png)
 
 ### Features:
 
