@@ -20,9 +20,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.weatherapp.data.entity.CurrentWeather
-import com.example.weatherapp.ui.viewmodel.CurrentWeatherViewModel
 import com.example.weatherapp.ui.theme.WeatherAppTheme
 import com.example.weatherapp.ui.uistate.CurrentWeatherState
+import com.example.weatherapp.ui.viewmodel.CurrentWeatherViewModel
+
 
 @Composable
 fun CurrentWeatherScreen(
@@ -35,7 +36,12 @@ fun CurrentWeatherScreen(
         }
         is CurrentWeatherState.OnError -> {
             // Show error
-            ShowErrorMessage(text = result.message)
+            ShowErrorMessage(
+                text = result.message,
+                actionMessage = "Refresh"
+            ) {
+                viewModel.getCurrentLocation()
+            }
         }
         is CurrentWeatherState.OnLoading -> {
             ShowLoading()

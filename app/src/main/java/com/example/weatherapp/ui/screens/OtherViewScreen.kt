@@ -13,10 +13,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.weatherapp.common.constants.Constants
@@ -106,9 +108,14 @@ fun ShowErrorMessage(text: String?, actionMessage: String? = null, action: (() -
                     onClick = { action() },
                     modifier = Modifier
                         .height(56.dp)
+                        .padding(10.dp)
                         .background(MaterialTheme.colors.primarySurface)
                 ) {
-                    Text(text = actionMessage)
+                    androidx.compose.material.Text(
+                        text = actionMessage ?: "Weather App",
+                        color = Color.White,
+                        fontSize = 16.sp
+                    )
                 }
             }
         }

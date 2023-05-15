@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weatherapp.BuildConfig
 import com.example.weatherapp.common.constants.Constants
 import com.example.weatherapp.common.utils.ExtentionFunction.capitalizeWords
 import com.example.weatherapp.common.utils.NetworkResponse
@@ -36,21 +35,28 @@ class CurrentWeatherViewModel @Inject constructor(
 
     init {
         getCurrentLocation()
-        BuildConfig.APPLICATION_ID
     }
 
-    private fun getCurrentLocation() {
-        val task = permissionHandler.getCurrentLocation()
-        if (task != null) {
+    fun getCurrentLocation() {
+        viewModelScope.launch {
             _uiState.value = CurrentWeatherState.OnLoading
-            // TODO rewrite this
-            task.addOnSuccessListener {
-                getCurrentWeather(it.latitude, it.longitude)
-            }.addOnFailureListener {
-                _uiState.value = CurrentWeatherState.OnError(Constants.FAILED_FETCH_USER_LOCATION)
+            permissionHandler.getCurrentLocation().collect { result ->
+                if (result.data != null) {
+                    when (val res = result) {
+                        is NetworkResponse.Error -> {
+                            _uiState.value = CurrentWeatherState.OnError(res.message)
+                        }
+                        is NetworkResponse.Success -> {
+                            getCurrentWeather(result.data.latitude, result.data.longitude)
+                        }
+                        else -> _uiState.value = CurrentWeatherState.OnLoading
+                    }
+                } else {
+//                    _uiState.value =
+//                        CurrentWeatherState.OnError(Constants.PERMISSION_DENIED_MESSAGE)
+                }
             }
-        } else {
-            _uiState.value = CurrentWeatherState.OnError(Constants.PERMISSION_DENIED_MESSAGE)
+
         }
     }
 

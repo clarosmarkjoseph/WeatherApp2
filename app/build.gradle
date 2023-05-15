@@ -16,6 +16,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments clearPackageData: 'false'
         vectorDrawables {
             useSupportLibrary true
         }
@@ -57,6 +58,12 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+//    testOptions {
+//        unitTests {
+//            includeAndroidResources = false
+//            returnDefaultValues = true
+//        }
+//    }
     // Allow references to generated code
     kapt {
         correctErrorTypes true
@@ -112,14 +119,26 @@ dependencies {
 
     // Get Location
     implementation "com.google.android.gms:play-services-location:$location_service_version"
+    implementation "com.google.android.gms:play-services-tasks:16.0.1"
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation "io.mockk:mockk:$mockk_version"
     testImplementation "io.mockk:mockk-android:$mockk_version"
     testImplementation "io.mockk:mockk-agent:$mockk_version"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
+    testImplementation "com.google.dagger:hilt-android-compiler:2.38.1"
+    testImplementation "com.google.dagger:hilt-android-testing:2.38.1"
+
+    androidTestImplementation "com.google.dagger:hilt-android-compiler:2.38.1"
+    androidTestImplementation "com.google.dagger:hilt-android-testing:2.38.1"
+    kaptTest "com.google.dagger:hilt-android-compiler:2.38.1"
+    kaptTest "com.google.dagger:hilt-android-testing:2.38.1"
+    kaptAndroidTest "com.google.dagger:hilt-android-compiler:2.38.1"
+    kaptAndroidTest "com.google.dagger:hilt-android-testing:2.38.1"
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
 
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"

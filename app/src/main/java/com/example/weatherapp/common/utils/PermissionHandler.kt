@@ -6,33 +6,50 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import androidx.core.app.ActivityCompat
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.MultiplePermissionsState
+import com.example.weatherapp.common.constants.Constants
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationToken
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.gms.tasks.OnTokenCanceledListener
-import com.google.android.gms.tasks.Task
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
 class PermissionHandler @Inject constructor(@ApplicationContext private val context: Context) {
 
 
     @SuppressLint("Permission check is already in isPermissionGranted() method")
-    fun getCurrentLocation(): Task<Location>? {
+    fun getCurrentLocation(): Flow<NetworkResponse<Location>> = callbackFlow {
+        trySend(NetworkResponse.Loading())
         if (isPermissionGranted()) {
-            val fusedLocationClient: FusedLocationProviderClient =
-                LocationServices.getFusedLocationProviderClient(context)
-           return fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, object : CancellationToken() {
-               override fun onCanceledRequested(listener: OnTokenCanceledListener) = CancellationTokenSource().token
+            try {
+                val fusedLocationClient: FusedLocationProviderClient =
+                    LocationServices.getFusedLocationProviderClient(context)
+                fusedLocationClient.getCurrentLocation(
+                    Priority.PRIORITY_HIGH_ACCURACY,
+                    object : CancellationToken() {
+                        override fun onCanceledRequested(listener: OnTokenCanceledListener) =
+                            CancellationTokenSource().token
 
-               override fun isCancellationRequested() = false
-           })
+                        override fun isCancellationRequested() = false
+                    })
+                    .addOnSuccessListener {
+                        trySend(NetworkResponse.Success(it))
+                    }.addOnFailureListener {
+                        trySend(NetworkResponse.Error(Constants.FAILED_FETCH_USER_LOCATION))
+                    }
+                awaitClose { cancel() }
+            } catch (e: Exception) {
+                trySend(NetworkResponse.Error(Constants.FAILED_FETCH_USER_LOCATION))
+            }
+        } else {
+            trySend(NetworkResponse.Error(Constants.FAILED_FETCH_USER_LOCATION))
         }
-        return null
     }
 
     private fun isPermissionGranted(): Boolean {
